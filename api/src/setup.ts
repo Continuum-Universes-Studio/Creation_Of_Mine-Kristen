@@ -48,10 +48,12 @@ await sql.unsafe(`
     title text not null,
     body text not null,
     published_on date not null,
+    sort integer not null default 0,
     created_at timestamptz not null default now(),
     updated_at timestamptz not null default now()
   )
 `);
+await sql.unsafe(`alter table stories add column if not exists sort integer not null default 0`);
 
 const username = process.env.ADMIN_USERNAME ?? "admin";
 const password = process.env.ADMIN_PASSWORD;
@@ -64,7 +66,7 @@ if (userCount.value === 0) {
 
 const [storyCount] = await db.select({ value: count() }).from(stories);
 if (storyCount.value === 0) {
-  const notesPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../js/posts.json");
+  const notesPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../frontend/public/stories.json");
   const notes = JSON.parse(await readFile(notesPath, "utf8")) as Array<{
     slug: string;
     title: string;

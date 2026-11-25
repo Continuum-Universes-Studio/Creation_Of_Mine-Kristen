@@ -93,6 +93,13 @@ export function signOut() {
   return request<{ ok: boolean }>("/api/session", { method: "DELETE" });
 }
 
+export function updateAccount(account: { username: string; currentPassword: string; newPassword: string }) {
+  return request<{ username: string }>("/api/manage/account", {
+    method: "PUT",
+    body: JSON.stringify(account),
+  });
+}
+
 export function listStories() {
   return request<Story[]>("/api/manage/stories");
 }

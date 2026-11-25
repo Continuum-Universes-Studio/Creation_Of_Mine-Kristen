@@ -112,6 +112,32 @@ app.use("/manage/*", async (c, next) => {
   await next();
 });
 
+app.put("/manage/account", async (c) => {
+  const sessionUser = await currentUser(getCookie(c, cookieName));
+  if (!sessionUser) return c.json({ error: "Sign in first." }, 401);
+  const body = await c.req.json<{ username?: string; currentPassword?: string; newPassword?: string }>().catch(() => null);
+  const username = body?.username?.trim() ?? "";
+  const currentPassword = body?.currentPassword ?? "";
+  const newPassword = body?.newPassword ?? "";
+  if (!username || username.length > 80) return c.json({ error: "Choose a name." }, 400);
+  if (!currentPassword) return c.json({ error: "Type the current password." }, 400);
+  if (newPassword.length > 200) return c.json({ error: "Choose a shorter password." }, 400);
+  const [user] = await db.select().from(users).where(eq(users.id, sessionUser.id)).limit(1);
+  if (!user || !(await verifyPassword(currentPassword, user.passwordHash))) {
+    return c.json({ error: "That password did not match." }, 400);
+  }
+  const [taken] = await db.select({ id: users.id }).from(users).where(eq(users.username, username)).limit(1);
+  if (taken && taken.id !== user.id) return c.json({ error: "That name is already used." }, 409);
+  await db
+    .update(users)
+    .set({
+      username,
+      ...(newPassword ? { passwordHash: await hashPassword(newPassword) } : {}),
+    })
+    .where(eq(users.id, user.id));
+  return c.json({ username });
+});
+
 registerLibrary(app);
 
 app.get("/manage/stories", async (c) => {

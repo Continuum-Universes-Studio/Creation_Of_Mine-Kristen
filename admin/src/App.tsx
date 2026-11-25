@@ -3,6 +3,7 @@ import { NavLink, Navigate, Route, Routes, useNavigate, useParams } from "react-
 import { currentSession, signOut } from "./api";
 import { ConfirmProvider } from "./components/Confirm";
 import AboutDeskPage from "./pages/AboutDeskPage";
+import AccountPage from "./pages/AccountPage";
 import BookEditPage from "./pages/BookEditPage";
 import BookListPage from "./pages/BookListPage";
 import BooksIntroPage from "./pages/BooksIntroPage";
@@ -78,6 +79,7 @@ export default function App() {
                 <NavLink to="/books">Books</NavLink>
                 <NavLink to="/gallery">Gallery</NavLink>
                 <NavLink to="/about">About</NavLink>
+                <NavLink to="/account">Account</NavLink>
               </nav>
               <Routes>
                 <Route index element={<Navigate to="/blog" replace />} />
@@ -94,6 +96,7 @@ export default function App() {
                 <Route path="gallery/new" element={<GalleryGroupEditPage />} />
                 <Route path="gallery/:id" element={<GalleryGroupEditPage />} />
                 <Route path="about" element={<AboutDeskPage />} />
+                <Route path="account" element={<AccountPage username={username} onSaved={setUsername} />} />
               </Routes>
             </div>
           ) : (
