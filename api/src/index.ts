@@ -211,6 +211,10 @@ async function uniqueSlug(base: string) {
 
 await ensureContent();
 
-serve({ fetch: app.fetch, hostname: "127.0.0.1", port: 3000 }, () => {
+const routes = new Hono();
+routes.route("/", app);
+routes.route("/api", app);
+
+serve({ fetch: routes.fetch, hostname: "127.0.0.1", port: 3000 }, () => {
   console.log("API listening on http://127.0.0.1:3000");
 });
