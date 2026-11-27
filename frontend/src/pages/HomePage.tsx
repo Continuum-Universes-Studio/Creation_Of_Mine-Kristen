@@ -12,10 +12,11 @@ export default function HomePage() {
   useEffect(() => {
     let alive = true;
     loadBooks().then((books) => {
-      if (!alive || !books?.length) return;
+      if (!alive || !books) return;
+      const shown = books.filter((book) => book.inCarousel !== false);
       const next = homeHtml.replace(
         /<div class="book-track">[\s\S]*?<\/div>/,
-        `<div class="book-track">${carouselMarkup(books)}</div>`,
+        `<div class="book-track">${carouselMarkup(shown)}</div>`,
       );
       setHtml(next);
     });

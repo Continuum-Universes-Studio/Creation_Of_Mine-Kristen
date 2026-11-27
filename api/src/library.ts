@@ -28,6 +28,7 @@ function bookJson(row: typeof books.$inferSelect) {
     secondaryLabel: row.secondaryLabel,
     secondaryHref: row.secondaryHref,
     shelf: row.shelf,
+    inCarousel: row.inCarousel,
     sort: row.sort,
   };
 }
@@ -47,6 +48,7 @@ type BookInput = {
   secondaryLabel?: string;
   secondaryHref?: string;
   shelf?: string;
+  inCarousel?: boolean;
   sort?: number;
 };
 
@@ -73,6 +75,7 @@ function bookValues(body: BookInput | null) {
       secondaryLabel: body?.secondaryLabel?.trim() ?? "",
       secondaryHref: body?.secondaryHref?.trim() ?? "",
       shelf,
+      inCarousel: body?.inCarousel !== false,
       sort,
     },
   } as const;

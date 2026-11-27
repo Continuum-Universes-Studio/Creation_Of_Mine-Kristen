@@ -1,4 +1,4 @@
-import { date, integer, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+import { boolean, date, integer, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -50,6 +50,7 @@ export const books = pgTable("books", {
   secondaryLabel: text("secondary_label").notNull().default(""),
   secondaryHref: text("secondary_href").notNull().default(""),
   shelf: text("shelf").notNull().default("block"),
+  inCarousel: boolean("in_carousel").notNull().default(true),
   sort: integer("sort").notNull().default(0),
 });
 

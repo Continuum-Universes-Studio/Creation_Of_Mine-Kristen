@@ -39,9 +39,11 @@ export async function ensureContent() {
       secondary_label text not null default '',
       secondary_href text not null default '',
       shelf text not null default 'block',
+      in_carousel boolean not null default true,
       sort integer not null default 0
     )
   `);
+  await sql.unsafe(`alter table books add column if not exists in_carousel boolean not null default true`);
   await sql.unsafe(`
     create table if not exists gallery_groups (
       id serial primary key,

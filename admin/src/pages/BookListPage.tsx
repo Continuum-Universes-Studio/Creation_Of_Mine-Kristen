@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { deleteBook, listBooks, saveBookOrder, type Book } from "../api";
+import { deleteBook, listBooks, saveBook, saveBookOrder, type Book } from "../api";
 import { useConfirm } from "../components/Confirm";
 
 type Lift = {
@@ -75,6 +75,19 @@ export default function BookListPage() {
     };
   }, []);
 
+  async function onCarousel(book: Book, show: boolean) {
+    setError("");
+    setBooks((current) => current?.map((item) => item.id === book.id ? { ...item, inCarousel: show } : item) ?? current);
+    try {
+      const saved = await saveBook({ ...book, inCarousel: show });
+      setBooks((current) => current?.map((item) => item.id === book.id ? saved : item) ?? current);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "The carousel status was not saved.");
+      const rows = await listBooks().catch(() => null);
+      if (rows) setBooks(rows);
+    }
+  }
+
   async function onRemove(book: Book) {
     const yes = await confirm(`Remove “${book.title}”?`);
     if (!yes) return;
@@ -147,7 +160,7 @@ export default function BookListPage() {
               draggable
               style={lift ? { transform: `translateY(${shift}px)` } : undefined}
               onDragStart={(event) => {
-                if (event.target instanceof Element && event.target.closest("a, button")) {
+                if (event.target instanceof Element && event.target.closest("a, button, select, label")) {
                   event.preventDefault();
                   return;
                 }
@@ -201,6 +214,16 @@ export default function BookListPage() {
                   <span className="book-thumb">{book.shortTitle || book.title}</span>
                 )}
               </div>
+              <label className="carousel-status">
+                Carousel
+                <select
+                  value={book.inCarousel === false ? "hide" : "show"}
+                  onChange={(event) => void onCarousel(book, event.target.value === "show")}
+                >
+                  <option value="show">Show</option>
+                  <option value="hide">Hide</option>
+                </select>
+              </label>
               <div className="row">
                 <Link className="button quiet" to={`/books/${book.id}`}>Edit</Link>
                 <button className="quiet" type="button" onClick={() => void onRemove(book)}>Remove</button>

@@ -19,6 +19,7 @@ const empty: Omit<Book, "id" | "slug"> = {
   secondaryLabel: "",
   secondaryHref: "",
   shelf: "block",
+  inCarousel: true,
   sort: 0,
 };
 

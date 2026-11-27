@@ -15,6 +15,7 @@ export type Book = {
   secondaryLabel: string;
   secondaryHref: string;
   shelf: string;
+  inCarousel?: boolean;
   sort: number;
 };
 
